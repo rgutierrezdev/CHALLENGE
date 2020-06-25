@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodingChallenge.Data.RECURSOS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -14,7 +15,7 @@ namespace CodingChallenge.Data.MODELOS
         /// <param name="Lado"></param>
         public FiguraTrianguloEquilatero(double Lado)
         {
-            this.LadoA = Lado;
+            this.LadoA = Lado;            
         }
 
         public override double CalcularArea()
@@ -25,6 +26,11 @@ namespace CodingChallenge.Data.MODELOS
         public override double CalcularPerimetro()
         {
             return 3 * LadoA;
+        }
+
+        public override void actualizarTipoFigura()
+        {
+            this.Tipo_Figura = Idioma.TRIANGULO;
         }
     }
 }

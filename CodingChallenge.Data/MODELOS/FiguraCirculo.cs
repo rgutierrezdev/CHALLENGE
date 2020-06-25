@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodingChallenge.Data.RECURSOS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,13 +11,12 @@ namespace CodingChallenge.Data.MODELOS
     {
         private double diametro;
 
-        public double Dadio { get => diametro; set => diametro = value; }
+        public double Radio { get => diametro; set => diametro = value; }
 
         public FiguraCirculo(double Radio)
         {
-            diametro = Radio;
+            diametro = Radio;            
         }
-
 
         public override double CalcularArea()
         {
@@ -26,6 +26,11 @@ namespace CodingChallenge.Data.MODELOS
         public override double CalcularPerimetro()
         {
             return Math.PI * diametro;
+        }
+
+        public override void actualizarTipoFigura()
+        {
+            this.Tipo_Figura = Idioma.CIRCULO;
         }
     }
 }

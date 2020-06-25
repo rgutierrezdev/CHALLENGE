@@ -21,91 +21,78 @@ namespace CodingChallenge.Data.CLASES
 {
     public static class Reporte
     {
-        static Dictionary<Type, int> diccionario = new Dictionary<Type, int>
+        static Dictionary<string, string> Idiomas = new Dictionary<string, string>
         {
-            { typeof(FiguraCuadrado),0},
-            { typeof(FiguraCirculo),1},
-            { typeof(FiguraRectangulo),2},
-            { typeof(FiguraTrianguloEquilatero),3},
-            { typeof(FiguraTrapecio),4}
+            {"INGLES","en-US"},
+            {"FRANCES","fr"}
         };
-
-        public static string Imprimir(List<Figura> figuras)
-        {                      
-            if (!figuras.Any()) return new StringBuilder("<h1>"+Idioma.LISTA_VACIA+"</h1>").ToString();
-
-            StringBuilder sb = new StringBuilder();
-
-            #region CONTADORES
-            int numeroCuadrados = 0;
-            int numeroCirculos = 0;
-            int numeroTriangulos = 0;
-            int numeroRectangulos = 0;
-            int numeroTrapecios = 0;
-            #endregion 
-
-            #region ACUMULADORES
-            double areaCuadrados = 0;
-            double areaCirculos = 0;
-            double areaTriangulos = 0;
-            double areaRectangulos = 0;
-            double areaTrapecios = 0;
-
-            double perimetroCuadrados = 0;
-            double perimetroCirculos = 0;
-            double perimetroTriangulos = 0;
-            double perimetroRectangulos = 0;
-            double perimetroTrapecios = 0;
+        /// <summary>
+        /// figuras recibe un listado de figuras generico, idioma recibe el nombre el idioma a usar (cadena vacia usa el idioma neutral es-AR)
+        /// </summary>
+        /// <param name="figuras"></param>
+        /// <param name="idioma"></param>
+        /// <returns></returns>
+        public static string Imprimir(List<Figura> figuras, string idioma)
+        {
+            #region VALIDACIONES
+            string idiomaSint = "";
+            if (Idiomas.TryGetValue(idioma.ToUpper(), out idiomaSint))            
+                Thread.CurrentThread.CurrentUICulture = new CultureInfo(idiomaSint);
+            
+            if (!figuras.Any()) 
+                return new StringBuilder("<h1>"+Idioma.LISTA_VACIA+"</h1>").ToString();
             #endregion
 
-            foreach (Figura f in figuras)
-            {
-                switch (diccionario[f.GetType()]){
-                    case Constantes.CUADRADO:
-                        Calcular(ref areaCuadrados, ref perimetroCuadrados, ref numeroCuadrados, f);
-                        break;
-                    case Constantes.CIRCULO:
-                        Calcular(ref areaCirculos, ref perimetroCirculos, ref numeroCirculos, f);
-                        break;
-                    case Constantes.RECTANGULO:
-                        Calcular(ref areaRectangulos, ref perimetroRectangulos, ref numeroRectangulos, f);
-                        break;
-                    case Constantes.TRIANGULO_EQUILATERO:
-                        Calcular(ref areaTriangulos, ref perimetroTriangulos, ref numeroTriangulos, f);
-                        break;
-                    case Constantes.TRAPECIO:
-                        Calcular(ref areaTrapecios, ref perimetroTrapecios, ref numeroTrapecios, f);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(Idioma.FORMA_DESCONOCIDA);
-                }
-            }
+            
+            #region VARIABLES
+            int numeroFiguras = 0;
+            double areaFiguras = 0;
+            double perimetroFiguras = 0;
+            StringBuilder sb = new StringBuilder();
+            #endregion
 
+            //SETEO LOS TIPOS DE FIGURA
+            figuras.ForEach(f => f.actualizarTipoFigura());
             //CABECERA
             sb.Append("<h1>" + Idioma.CABECERA + "</h1>");
+
             //CUERPO
-            sb.Append(ObtenerLinea(numeroCuadrados, areaCuadrados, perimetroCuadrados, Idioma.CUADRADO));
-            sb.Append(ObtenerLinea(numeroCirculos, areaCirculos, perimetroCirculos, Idioma.CIRCULO));
-            sb.Append(ObtenerLinea(numeroTriangulos, areaTriangulos, perimetroTriangulos, Idioma.TRIANGULO));
-            sb.Append(ObtenerLinea(numeroRectangulos, areaRectangulos, perimetroRectangulos, Idioma.RECTANGULO));
-            sb.Append(ObtenerLinea(numeroTrapecios, areaTrapecios, perimetroTrapecios, Idioma.TRAPECIO));
+            var listasPorTipo = figuras.GroupBy(f => f.Tipo_Figura)
+                                       .Select(grp => grp.ToList())
+                                       .ToList();
+
+            foreach (var lista in listasPorTipo)
+            {
+                int numeroFiguraAUX = 0;
+                double areaFiguraAUX = 0;
+                double perimetroFiguraAux = 0;
+                string tipoFigura = "";
+
+                foreach (var figura in lista)
+                {
+                    tipoFigura = figura.Tipo_Figura;
+                    areaFiguraAUX += figura.CalcularArea();
+                    perimetroFiguraAux += figura.CalcularPerimetro();
+                    numeroFiguraAUX++;
+                }
+
+                sb.Append(ObtenerLinea(numeroFiguraAUX, areaFiguraAUX, perimetroFiguraAux, tipoFigura));
+                numeroFiguras += numeroFiguraAUX;
+                areaFiguras += areaFiguraAUX;
+                perimetroFiguras += perimetroFiguraAux;
+            }
+                        
             //PIE
             sb.Append(Idioma.TOTAL +":<br/>");
-            sb.Append( (numeroCuadrados + numeroCirculos + numeroTriangulos + numeroRectangulos + numeroTrapecios) + " " + Idioma.FORMAS + " ");
-            sb.Append(Idioma.PERIMETRO + " " + (perimetroCuadrados + perimetroTriangulos + perimetroCirculos + perimetroRectangulos + perimetroTrapecios).ToString("#.##") + " ");
-            sb.Append(Idioma.AREA + " " + (areaCuadrados + areaCirculos + areaTriangulos + areaRectangulos + areaTrapecios).ToString("#.##"));
-
+            sb.Append( numeroFiguras + " " + Idioma.FORMAS + " ");
+            sb.Append(Idioma.PERIMETRO + " " + perimetroFiguras.ToString("#.##") + " ");
+            sb.Append(Idioma.AREA + " " + areaFiguras.ToString("#.##"));
+            
             return sb.ToString();
         }
         static string ObtenerLinea(int Cantidad, double Area, double Perimetro, string NombreFigura)
         {
             return Cantidad > 0 ? $"{Cantidad} {Pluralizar(Cantidad, NombreFigura)} | " + Idioma.AREA + $" {Area:#.##} | " + Idioma.PERIMETRO + $" {Perimetro:#.##} <br/>" : String.Empty;
-        }
-        static void Calcular(ref double Area, ref double Perimetro, ref int Cantidad, Figura Figura)
-        {
-            Area += Figura.CalcularArea();
-            Perimetro += Figura.CalcularPerimetro();
-            Cantidad++;
         }
         static string Pluralizar(int Cantidad, string Singular)
         {

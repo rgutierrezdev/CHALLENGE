@@ -52,7 +52,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CLASES\Constantes.cs" />
     <Compile Include="CLASES\Reporte.cs" />
     <Compile Include="MODELOS\Figura.cs" />
     <Compile Include="MODELOS\FiguraCirculo.cs" />

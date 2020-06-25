@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CodingChallenge.Data.RECURSOS;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,7 +18,7 @@ namespace CodingChallenge.Data.MODELOS
         public FiguraRectangulo(double LadoA, double LadoB)
         {
             this.LadoA = LadoA;
-            this.LadoB = LadoB;
+            this.LadoB = LadoB;            
         }
 
         public override double CalcularArea()
@@ -28,6 +29,11 @@ namespace CodingChallenge.Data.MODELOS
         public override double CalcularPerimetro()
         {
             return (2 * LadoA) + (2 * LadoB);
+        }
+
+        public override void actualizarTipoFigura()
+        {
+            this.Tipo_Figura = Idioma.RECTANGULO;
         }
     }
 }
